@@ -8,7 +8,9 @@ from kivy.properties import NumericProperty, ReferenceListProperty, ObjectProper
 from kivy.utils import platform
 
 from time import time
+from random import randint
 from abstractboard import AbstractBoard
+
 
 starposs = {19:[(3,3),(3,9),(3,15),(9,3),(9,9),(9,15),(15,3),(15,9),(15,15)],
             13:[(3,3),(3,9),(9,3),(9,9),(6,6)],
@@ -658,21 +660,26 @@ class GuiBoard(Widget):
 
     def advance_one_move(self,*args,**kwargs):
         print '%% Advancing one move!', time()
-        if self.navmode == 'Score':
-            self.clear_ld_markers()
-            self.make_scoreboard()
         t1 = time()
-        children_exist = self.abstractboard.do_children_exist()
-        t2 = time()
-        if children_exist:
-            instructions = self.abstractboard.advance_position()
-            self.follow_instructions(instructions)
-        else:
-            if platform() == 'android':
-                import android
-                android.vibrate(0.1)
+        instructions = {'add': [((randint(0,18),randint(0,18)),['w','b'][randint(0,1)])]}
+        self.follow_instructions(instructions)
         t3 = time()
         print '%% Total time for button function to complete', t3-t1
+        # if self.navmode == 'Score':
+        #     self.clear_ld_markers()
+        #     self.make_scoreboard()
+        # t1 = time()
+        # children_exist = self.abstractboard.do_children_exist()
+        # t2 = time()
+        # if children_exist:
+        #     instructions = self.abstractboard.advance_position()
+        #     self.follow_instructions(instructions)
+        # else:
+        #     if platform() == 'android':
+        #         import android
+        #         android.vibrate(0.1)
+        # t3 = time()
+        # print '%% Total time for button function to complete', t3-t1
         # print '%% Children exist', t2-t1
         # print '%% Follow instructions', t3-t2
         # print '%%'
@@ -687,11 +694,18 @@ class GuiBoard(Widget):
         print '``` Time between press and release:',t-t0
 
     def retreat_one_move(self,*args,**kwargs):
-        if self.navmode == 'Score':
-            self.clear_ld_markers()
-            self.make_scoreboard()
-        instructions = self.abstractboard.retreat_position()
+        print '%% Advancing one move!', time()
+        t1 = time()
+        instructions = {'remove': [(self.stones.keys()[0],'b')]}
+        print instructions
         self.follow_instructions(instructions)
+        t3 = time()
+        print '%% Total time for retreat button function to complete', t3-t1
+        # if self.navmode == 'Score':
+        #     self.clear_ld_markers()
+        #     self.make_scoreboard()
+        # instructions = self.abstractboard.retreat_position()
+        # self.follow_instructions(instructions)
 
     def jump_to_start(self,*args,**kwargs):
         instructions = self.abstractboard.jump_to_node(self.abstractboard.game.root)
@@ -774,6 +788,8 @@ class GuiBoard(Widget):
         # print '@@ add widget', t4-t3, (t4-t3)/(t4-t1)
 
     def remove_stone(self,coord=(1,1),*args,**kwargs):
+        print coord,self.stones.keys()
+        print self.stones[coord]
         if self.stones.has_key(coord):
             stone = self.stones.pop(coord)
             self.remove_widget(stone)
