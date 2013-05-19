@@ -1,0 +1,154 @@
+<Container>:
+    orientation: 'vertical'
+    board: bc.board
+    BoardContainer:
+        id: bc
+    BoxLayout:
+        size_hint_y: None
+        size_y: (100,'sp')
+        orientation: 'horizontal'
+        Button:
+            text: 'back'
+            on_press: app.time_start(); bc.board.retreat_one_move()
+            on_release: app.time_stop()
+        Button:
+            text: 'next'
+            on_press: app.time_start(); bc.board.advance_one_move()
+            on_release: app.time_stop()
+
+<PlayMarker>:
+    canvas:
+        Color:
+            rgba: self.markercolour[0],self.markercolour[1],self.markercolour[2],0.6
+        Ellipse:
+            pos: self.pos[0] + 0.35*self.width,self.pos[1] + 0.35*self.height
+            size: 0.3*self.width, 0.3*self.width
+
+<StarPoint>:
+    canvas:
+        Color:
+            rgb: 0,0,0
+        Ellipse:
+            size: 0.25*self.width, 0.25*self.height
+            pos: self.pos[0] + 0.375*self.width, self.pos[1] + 0.375*self.height
+    
+
+<GuiBoard>:
+    gobansize: self.size
+    showcoords: False
+    numcells: self.gridsize + 1 + int(self.showcoords)
+    boardindent: float(self.width) / self.numcells, float(self.height) / self.numcells
+    boardlength: self.size[0] * float(self.gridsize-1)/self.numcells
+    stonesize: (float(self.gobansize[0])/(self.numcells),float(self.gobansize[0])/(self.numcells))
+    gridspacing: float(self.width)/(self.numcells)
+
+    on_gridsize: self.draw_starpoints()
+    
+    canvas:
+        Color:
+            rgb: (0.980, 0.766, 0.402)
+        Rectangle:
+            pos: self.gobanpos
+            size: self.gobansize
+
+        Color:
+            hsv: (0,0,0)
+        Line:
+            points: [self.gobanpos[0] + self.boardindent[0], self.gobanpos[1] + self.boardindent[1], self.gobanpos[0] + self.width - self.boardindent[0], self.gobanpos[1] + self.boardindent[1], self.gobanpos[0] + self.width - self.boardindent[0], self.gobanpos[1] + self.height - self.boardindent[1], self.gobanpos[0] + self.boardindent[0], self.gobanpos[1] + self.height - self.boardindent[1]]
+            width: 1.0
+            close: True
+
+        Line:
+            points: self.gridlines
+            width: 1.0
+
+<BoardContainer>:
+    board: theboard
+
+    GuiBoard:
+        id: theboard
+        size: self.parent.boardsize
+        pos: self.parent.boardpos
+        uielements: self.parent.uielements
+
+<PlayerDetails>:
+    orientation: 'vertical'
+    spacing: 1
+    wstone: white_stone
+    bstone: black_stone
+    
+    BoxLayout:
+        orientation: 'horizontal'
+        Widget:
+            id: white_stone
+            canvas:
+                Color:
+                    rgba: (0.2,0.2,0.2,1)
+                Ellipse:
+                    pos: self.pos[0] + 0.05*self.width, self.pos[1] + 0.05*self.height
+                    size: (0.9*self.height,0.9*self.height)
+                Color:
+                    rgb: (1,1,1)
+                Ellipse:
+                    pos: self.pos[0] + 0.1*self.width, self.pos[1] + 0.1*self.height
+                    size: (0.8*self.height,0.8*self.height)
+                Color:
+                    rgba: self.parent.parent.wtoplaycolour
+                Ellipse:
+                    pos: self.pos[0] + 0.35*self.width, self.pos[1] + 0.35*self.height
+                    size: 0.3*self.width,0.3*self.height
+            size: self.parent.height, self.parent.height
+            size_hint: None, None
+                
+        Label:
+            text: ''.join(('',self.parent.parent.wtext,' ',self.parent.parent.wrank,''))
+            font_size: 0.7*self.height
+            markup: True
+            text_size: self.width-20, self.height
+            halign: 'left'
+            valign: 'middle'
+
+    BoxLayout:
+        orientation: 'horizontal'
+        Widget:
+            id: black_stone
+            size: self.parent.height, self.parent.height
+            canvas:
+                Color:
+                    rgba: (0.8,0.8,0.8,1)
+                Ellipse:
+                    pos: self.pos[0] + 0.05*self.width, self.pos[1] + 0.05*self.height
+                    size: (0.9*self.height,0.9*self.height)
+                Color:
+                    rgb: (0,0,0)
+                Ellipse:
+                    pos: self.pos[0] + 0.1*self.width, self.pos[1] + 0.1*self.height
+                    size: (0.8*self.height,0.8*self.height)
+                Color:
+                    rgba: self.parent.parent.btoplaycolour
+                Ellipse:
+                    pos: self.pos[0] + 0.35*self.width, self.pos[1] + 0.35*self.height
+                    size: 0.3*self.width,0.3*self.height
+            size: self.parent.height, self.parent.height
+            size_hint: None, None
+        Label:
+            text: ''.join(('',self.parent.parent.btext,' ',self.parent.parent.brank,''))
+            font_size: 0.7*self.height
+            markup: True
+            text_size: self.width-20, self.height
+            halign: 'left'
+            valign: 'middle'
+
+<Stone>:
+    canvas:
+        Color:
+            rgb: 0,0,0
+        Ellipse:
+            size: self.size
+            pos: self.pos
+
+        Color:
+            rgb: self.colour
+        Ellipse:
+            size: (0.9*self.size[0],0.9*self.size[1])
+            pos: self.pos[0] + 0.05*self.width, self.pos[1] + 0.05*self.height
